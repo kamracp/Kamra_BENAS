@@ -1,3 +1,5 @@
+
+import OrganizationList from "../features/organizations/pages/OrganizationList";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
@@ -15,7 +17,8 @@ export default function AppRouter() {
 
         <Route path="dashboard" element={<Dashboard />} />
 
-        <Route path="organizations" element={<ComingSoon title="Organizations" />} />
+        <Route path="organizations"element={<OrganizationList />}
+/>
 
         <Route path="buildings" element={<ComingSoon title="Buildings" />} />
 
