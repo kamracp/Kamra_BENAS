@@ -1,4 +1,4 @@
-import { CampusList } from './features/campuses/components/CampusList';
+
 import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./router";
 

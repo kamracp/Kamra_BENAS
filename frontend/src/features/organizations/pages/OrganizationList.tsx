@@ -34,36 +34,36 @@ export default function OrganizationList() {
 
   const [search, setSearch] = useState("");
 
-  const filteredOrganizations = useMemo(() => {
-    const keyword = search.trim().toLowerCase();
+ const filteredOrganizations = useMemo(() => {
+  const keyword = search.trim().toLowerCase();
 
-    if (!keyword) {
-      return data;
-    }
+  if (!keyword) {
+    return data;
+  }
 
-    return data.filter((item) => {
-      return (
-        item.organization_code
-          .toLowerCase()
-          .includes(keyword) ||
-        item.organization_name
-          .toLowerCase()
-          .includes(keyword) ||
-        item.legal_name
-          .toLowerCase()
-          .includes(keyword) ||
-        item.email
-          .toLowerCase()
-          .includes(keyword) ||
-        item.gstin
-          .toLowerCase()
-          .includes(keyword) ||
-        item.pan
-          .toLowerCase()
-          .includes(keyword)
-      );
-    });
-  }, [data, search]);
+  return data.filter((item) => {
+    return (
+      item.organization_code
+        .toLowerCase()
+        .includes(keyword) ||
+      item.organization_name
+        .toLowerCase()
+        .includes(keyword) ||
+      (item.legal_name ?? "")
+        .toLowerCase()
+        .includes(keyword) ||
+      (item.email ?? "")
+        .toLowerCase()
+        .includes(keyword) ||
+      (item.gstin ?? "")
+        .toLowerCase()
+        .includes(keyword) ||
+      (item.pan ?? "")
+        .toLowerCase()
+        .includes(keyword)
+    );
+  });
+}, [data, search]);
 
   async function saveOrganization(
     formData: OrganizationCreate
