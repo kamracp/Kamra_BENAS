@@ -1,49 +1,34 @@
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 
+from app.api.organization import router as organization_router
 from app.database.base import Base
 from app.database.session import engine
 
-from app.organizations.models.organization import Organization
-from app.organizations.api.organization_routes import router as organization_router
-
+# Create database tables
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Kamra BENAS",
-    version="0.1.0",
+    title="Kamra BENAS API",
     description="Building Energy Performance & Net-Zero Accounting System",
+    version="0.1.0",
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://127.0.0.1:5173",
-        "http://localhost:5173",
-        "http://127.0.0.1:3000",
-        "http://localhost:3000",
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.include_router(
-    organization_router,
-    prefix="/organizations",
-    tags=["Organizations"],
-)
-
+# Health Check
 @app.get("/")
 def root():
     return {
-        "application": "Kamra BENAS",
+        "application": "Kamra BENAS API",
         "status": "running",
         "version": "0.1.0",
     }
+
 
 @app.get("/health")
 def health():
     return {
         "status": "healthy",
     }
+
+
+# API Routers
+app.include_router(organization_router)

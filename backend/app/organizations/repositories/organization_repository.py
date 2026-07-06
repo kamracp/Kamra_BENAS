@@ -8,11 +8,12 @@ from app.organizations.schemas.organization_schema import (
 
 
 class OrganizationRepository:
+
     @staticmethod
     def get_all(db: Session):
         return (
             db.query(Organization)
-            .order_by(Organization.organization_name)
+            .order_by(Organization.organization_name.asc())
             .all()
         )
 
@@ -24,6 +25,32 @@ class OrganizationRepository:
         return (
             db.query(Organization)
             .filter(Organization.id == organization_id)
+            .first()
+        )
+
+    @staticmethod
+    def get_by_code(
+        db: Session,
+        organization_code: str,
+    ):
+        return (
+            db.query(Organization)
+            .filter(
+                Organization.organization_code == organization_code
+            )
+            .first()
+        )
+
+    @staticmethod
+    def get_by_name(
+        db: Session,
+        organization_name: str,
+    ):
+        return (
+            db.query(Organization)
+            .filter(
+                Organization.organization_name == organization_name
+            )
             .first()
         )
 
