@@ -2,6 +2,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.database.config import settings
+# ❌ पुरानी लाइन (इसे हटाएं):
+# from app.database import get_db
+
+#  नई सही लाइन (इसे लिखें):
 
 engine = create_engine(
     settings.DATABASE_URL,

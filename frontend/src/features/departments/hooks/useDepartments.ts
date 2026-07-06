@@ -1,57 +1,57 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
-import organizationApi, {
-  type Organization,
-  type OrganizationCreate,
-  type OrganizationUpdate,
-} from "../api/organizationApi";
+import departmentApi, {
+  type Department,
+  type DepartmentCreate,
+  type DepartmentUpdate,
+} from "../api/departmentApi";
 
-const QUERY_KEY = ["organizations"] as const;
+const QUERY_KEY = ["departments"] as const;
 
-export function useOrganizations() {
-  return useQuery<Organization[]>({
+export function useDepartments() {
+  return useQuery<Department[]>({
     queryKey: QUERY_KEY,
-    queryFn: organizationApi.getAll,
+    queryFn: departmentApi.getAll,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
 }
 
-export function useOrganization(id?: number) {
-  return useQuery<Organization>({
+export function useDepartment(id?: number) {
+  return useQuery<Department>({
     queryKey: [...QUERY_KEY, id],
-    queryFn: () => organizationApi.getById(id as number),
+    queryFn: () => departmentApi.getById(id as number),
     enabled: !!id,
     staleTime: 5 * 60 * 1000,
   });
 }
 
-export function useCreateOrganization() {
+export function useCreateDepartment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: OrganizationCreate) =>
-      organizationApi.create(data),
+    mutationFn: (data: DepartmentCreate) =>
+      departmentApi.create(data),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEY,
       });
 
-      toast.success("Organization created successfully.");
+      toast.success("Department created successfully.");
     },
 
     onError: (error: any) => {
       toast.error(
         error?.response?.data?.detail ??
-          "Failed to create organization."
+          "Failed to create department."
       );
     },
   });
 }
 
-export function useUpdateOrganization() {
+export function useUpdateDepartment() {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -60,51 +60,51 @@ export function useUpdateOrganization() {
       data,
     }: {
       id: number;
-      data: OrganizationUpdate;
-    }) => organizationApi.update(id, data),
+      data: DepartmentUpdate;
+    }) => departmentApi.update(id, data),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEY,
       });
 
-      toast.success("Organization updated successfully.");
+      toast.success("Department updated successfully.");
     },
 
     onError: (error: any) => {
       toast.error(
         error?.response?.data?.detail ??
-          "Failed to update organization."
+          "Failed to update department."
       );
     },
   });
 }
 
-export function useDeleteOrganization() {
+export function useDeleteDepartment() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: number) =>
-      organizationApi.remove(id),
+      departmentApi.remove(id),
 
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: QUERY_KEY,
       });
 
-      toast.success("Organization deleted successfully.");
+      toast.success("Department deleted successfully.");
     },
 
     onError: (error: any) => {
       toast.error(
         error?.response?.data?.detail ??
-          "Failed to delete organization."
+          "Failed to delete department."
       );
     },
   });
 }
 
-export function useRefreshOrganizations() {
+export function useRefreshDepartments() {
   const queryClient = useQueryClient();
 
   return () =>
@@ -113,15 +113,15 @@ export function useRefreshOrganizations() {
     });
 }
 
-export function useOrganizationCache() {
+export function useDepartmentCache() {
   const queryClient = useQueryClient();
 
   return {
     getAll: () =>
-      queryClient.getQueryData<Organization[]>(QUERY_KEY),
+      queryClient.getQueryData<Department[]>(QUERY_KEY),
 
-    setAll: (organizations: Organization[]) =>
-      queryClient.setQueryData(QUERY_KEY, organizations),
+    setAll: (departments: Department[]) =>
+      queryClient.setQueryData(QUERY_KEY, departments),
 
     clear: () =>
       queryClient.removeQueries({

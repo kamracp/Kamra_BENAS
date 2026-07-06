@@ -1,4 +1,4 @@
-
+import { CampusList } from '../features/campuses/components/CampusList';
 import OrganizationList from "../features/organizations/pages/OrganizationList";
 import { Navigate, Route, Routes } from "react-router-dom";
 
@@ -40,6 +40,7 @@ export default function AppRouter() {
       <Route path="/login" element={<Login />} />
 
       <Route path="*" element={<NotFound />} />
+      <Route path="/campuses" element={<CampusList />} />
     </Routes>
   );
 }

@@ -1,9 +1,7 @@
-from sqlalchemy import Boolean
-from sqlalchemy import Column
-from sqlalchemy import DateTime
-from sqlalchemy import Integer
-from sqlalchemy import String
-from sqlalchemy import func
+from datetime import datetime
+
+from sqlalchemy import Boolean, DateTime, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -11,51 +9,48 @@ from app.database.base import Base
 class Organization(Base):
     __tablename__ = "organizations"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
-    organization_code = Column(
+    organization_code: Mapped[str] = mapped_column(
         String(30),
         unique=True,
         nullable=False,
-        index=True,
     )
 
-    organization_name = Column(
+    organization_name: Mapped[str] = mapped_column(
         String(200),
         nullable=False,
-        index=True,
     )
 
-    legal_name = Column(String(250), nullable=True)
-    industry = Column(String(120), nullable=True)
+    legal_name: Mapped[str | None] = mapped_column(String(250))
+    industry: Mapped[str | None] = mapped_column(String(120))
+    email: Mapped[str | None] = mapped_column(String(200))
+    phone: Mapped[str | None] = mapped_column(String(50))
+    website: Mapped[str | None] = mapped_column(String(250))
+    country: Mapped[str | None] = mapped_column(String(120))
+    state: Mapped[str | None] = mapped_column(String(120))
+    city: Mapped[str | None] = mapped_column(String(120))
+    timezone: Mapped[str | None] = mapped_column(String(80))
+    currency: Mapped[str | None] = mapped_column(String(20))
 
-    email = Column(String(255), nullable=True)
-    phone = Column(String(50), nullable=True)
-    website = Column(String(250), nullable=True)
-
-    country = Column(String(120), nullable=True)
-    state = Column(String(120), nullable=True)
-    city = Column(String(120), nullable=True)
-
-    timezone = Column(String(80), nullable=True)
-    currency = Column(String(20), nullable=True)
-
-    is_active = Column(
+    is_active: Mapped[bool] = mapped_column(
         Boolean,
-        nullable=False,
         default=True,
-        server_default="true",
     )
 
-    created_at = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
     )
 
-    updated_at = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=func.now(),
-        onupdate=func.now(),
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime,
+        default=datetime.utcnow,
+        onupdate=datetime.utcnow,
+    )
+
+    campuses = relationship(
+        "Campus",
+        back_populates="organization",
+        cascade="all, delete-orphan",
     )

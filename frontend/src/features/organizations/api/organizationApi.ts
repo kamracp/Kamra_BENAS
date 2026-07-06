@@ -39,7 +39,8 @@ export interface OrganizationCreate {
 export interface OrganizationUpdate
   extends Partial<OrganizationCreate> {}
 
-const API_URL = "/organizations";
+// इसे बदलकर अंत में स्लैश लगा दें
+const API_BASE_URL = 'http://localhost:8000/api/v1/organizations/';
 
 export const organizationApi = {
   getAll: async (): Promise<Organization[]> => {
