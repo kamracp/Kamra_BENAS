@@ -2,63 +2,70 @@ import client from "../../../services/api/client";
 
 export interface Department {
   id: number;
-  organization_id: number;
+
+  // Identity
   department_code: string;
   department_name: string;
+
+  // Relationship
+  organization_id: number;
+
+  // Optional
   description?: string;
-  hod_name?: string;
-  email?: string;
-  phone?: string;
+
+  // System
   is_active: boolean;
   created_at: string;
   updated_at: string;
 }
 
 export interface DepartmentCreate {
-  organization_id: number;
   department_code: string;
   department_name: string;
+  organization_id: number;
   description?: string;
-  hod_name?: string;
-  email?: string;
-  phone?: string;
+  is_active: boolean;
+}
+
+export interface DepartmentUpdate {
+  department_code?: string;
+  department_name?: string;
+  organization_id?: number;
+  description?: string;
   is_active?: boolean;
 }
 
-export interface DepartmentUpdate
-  extends Partial<DepartmentCreate> {}
-
-const API_URL = "/departments";
+const BASE_URL = "/departments";
 
 export const departmentApi = {
-  getAll: async (): Promise<Department[]> => {
-    const response = await client.get(API_URL);
-    return response.data;
+  async getAll(): Promise<Department[]> {
+    const { data } = await client.get<Department[]>(BASE_URL);
+    return data;
   },
 
-  getById: async (id: number): Promise<Department> => {
-    const response = await client.get(`${API_URL}/${id}`);
-    return response.data;
+  async getById(id: number): Promise<Department> {
+    const { data } = await client.get<Department>(`${BASE_URL}/${id}`);
+    return data;
   },
 
-  create: async (
-    data: DepartmentCreate
-  ): Promise<Department> => {
-    const response = await client.post(API_URL, data);
-    return response.data;
+  async create(payload: DepartmentCreate): Promise<Department> {
+    const { data } = await client.post<Department>(BASE_URL, payload);
+    return data;
   },
 
-  update: async (
+  async update(
     id: number,
-    data: DepartmentUpdate
-  ): Promise<Department> => {
-    const response = await client.put(`${API_URL}/${id}`, data);
-    return response.data;
+    payload: DepartmentUpdate
+  ): Promise<Department> {
+    const { data } = await client.put<Department>(
+      `${BASE_URL}/${id}`,
+      payload
+    );
+
+    return data;
   },
 
-  remove: async (id: number): Promise<void> => {
-    await client.delete(`${API_URL}/${id}`);
+  async remove(id: number): Promise<void> {
+    await client.delete(`${BASE_URL}/${id}`);
   },
 };
-
-export default departmentApi;

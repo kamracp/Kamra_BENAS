@@ -1,7 +1,8 @@
 import { NavLink } from "react-router-dom";
 import {
-  Building2,
+   Building2,
   Factory,
+  Users,
   Gauge,
   Zap,
   Wind,
@@ -23,6 +24,12 @@ const menu = [
     icon: Building2,
     path: "/organizations",
   },
+{
+  title: "Departments",
+  icon: Users,
+  path: "/departments",
+},
+
   {
     title: "Buildings",
     icon: Factory,

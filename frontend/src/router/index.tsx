@@ -1,3 +1,4 @@
+import DepartmentList from "../features/departments/pages/DepartmentList";
 import { CampusList } from '../features/campuses/components/CampusList';
 import OrganizationList from "../features/organizations/pages/OrganizationList";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -16,9 +17,16 @@ export default function AppRouter() {
         <Route index element={<Navigate to="/dashboard" replace />} />
 
         <Route path="dashboard" element={<Dashboard />} />
-
-        <Route path="organizations"element={<OrganizationList />}
+        <Route
+         path="organizations"
+        element={<OrganizationList />}
 />
+
+<Route
+  path="departments"
+  element={<DepartmentList />}
+/>
+       
 
         <Route path="buildings" element={<ComingSoon title="Buildings" />} />
 

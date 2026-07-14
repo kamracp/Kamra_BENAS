@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database.base import Base
 
@@ -48,5 +48,9 @@ class Organization(Base):
         default=datetime.utcnow,
         onupdate=datetime.utcnow,
     )
-
+    buildings = relationship(
+        "Building",
+        back_populates="organization",
+        cascade="all, delete-orphan",
+    )
    
