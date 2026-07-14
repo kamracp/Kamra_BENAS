@@ -1,82 +1,60 @@
+from app.core.exceptions import (
+    DuplicateResourceException,
+    ResourceNotFoundException,
+)
 from app.models.space import Space
 from app.repositories.space_repository import SpaceRepository
-from app.schemas.space import (
-    SpaceCreate,
-    SpaceUpdate,
-)
+from app.schemas.space import SpaceCreate, SpaceUpdate
 
 
 class SpaceService:
     def __init__(self, repository: SpaceRepository):
         self.repository = repository
 
-    def get_spaces(self) -> list[Space]:
-        return self.repository.get_all()
+    def get_all(
+        self,
+        floor_id: int | None = None,
+        building_id: int | None = None,
+    ) -> list[Space]:
+        return self.repository.get_all(floor_id, building_id)
 
-    def get_space(self, space_id: int) -> Space:
+    def get_by_id(self, space_id: int) -> Space:
         space = self.repository.get_by_id(space_id)
 
         if space is None:
-            raise ValueError(
-                f"Space '{space_id}' was not found."
-            )
+            raise ResourceNotFoundException("Space", space_id)
 
         return space
 
-    def create_space(
-        self,
-        space: SpaceCreate,
-    ) -> Space:
-        existing = self.repository.get_by_code(
-            space.space_code
+    def create(self, space: SpaceCreate) -> Space:
+        # Parent floor must belong to the same organization.
+        # building_id is derived from the floor, never from the client.
+        floor = self.repository.get_floor(space.floor_id)
+
+        if floor is None:
+            raise ResourceNotFoundException("Floor", space.floor_id)
+
+        if self.repository.get_by_code(space.space_code):
+            raise DuplicateResourceException(
+                "Space", "space_code", space.space_code,
+            )
+
+        return self.repository.create(
+            space,
+            building_id=floor.building_id,
         )
 
-        if existing:
-            raise ValueError(
-                f"Space code '{space.space_code}' already exists."
-            )
+    def update(self, space_id: int, space: SpaceUpdate) -> Space:
+        db_space = self.get_by_id(space_id)
 
-        return self.repository.create(space)
-
-    def update_space(
-        self,
-        space_id: int,
-        space: SpaceUpdate,
-    ) -> Space:
-        db_space = self.repository.get_by_id(space_id)
-
-        if db_space is None:
-            raise ValueError(
-                f"Space '{space_id}' was not found."
-            )
-
-        if (
-            space.space_code
-            and space.space_code != db_space.space_code
-        ):
-            existing = self.repository.get_by_code(
-                space.space_code
-            )
-
-            if existing:
-                raise ValueError(
-                    f"Space code '{space.space_code}' already exists."
+        if space.space_code and space.space_code != db_space.space_code:
+            if self.repository.get_by_code(space.space_code):
+                raise DuplicateResourceException(
+                    "Space", "space_code", space.space_code,
                 )
 
-        return self.repository.update(
-            db_space,
-            space,
-        )
+        return self.repository.update(db_space, space)
 
-    def delete_space(
-        self,
-        space_id: int,
-    ) -> None:
-        db_space = self.repository.get_by_id(space_id)
-
-        if db_space is None:
-            raise ValueError(
-                f"Space '{space_id}' was not found."
-            )
-
+    def delete(self, space_id: int) -> None:
+        db_space = self.get_by_id(space_id)
         self.repository.delete(db_space)

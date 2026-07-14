@@ -1,6 +1,13 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String
+from sqlalchemy import (
+    Boolean,
+    DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.base import Base
@@ -9,25 +16,21 @@ from app.database.base import Base
 class Department(Base):
     __tablename__ = "departments"
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        primary_key=True,
-        index=True,
+    __table_args__ = (
+        UniqueConstraint(
+            "organization_id",
+            "department_code",
+            name="uq_department_org_code",
+        ),
     )
 
-    # ------------------------------------------------------------------
-    # Organization
-    # ------------------------------------------------------------------
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
     organization_id: Mapped[int] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
-
-    # ------------------------------------------------------------------
-    # Identity
-    # ------------------------------------------------------------------
 
     department_code: Mapped[str] = mapped_column(
         String(30),
@@ -41,18 +44,10 @@ class Department(Base):
         index=True,
     )
 
-    # ------------------------------------------------------------------
-    # Description
-    # ------------------------------------------------------------------
-
     description: Mapped[str | None] = mapped_column(
         String(500),
         nullable=True,
     )
-
-    # ------------------------------------------------------------------
-    # System
-    # ------------------------------------------------------------------
 
     is_active: Mapped[bool] = mapped_column(
         Boolean,

@@ -3,17 +3,13 @@ import client from "../../../services/api/client";
 export interface Department {
   id: number;
 
-  // Identity
   department_code: string;
   department_name: string;
 
-  // Relationship
   organization_id: number;
 
-  // Optional
   description?: string;
 
-  // System
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -22,7 +18,6 @@ export interface Department {
 export interface DepartmentCreate {
   department_code: string;
   department_name: string;
-  organization_id: number;
   description?: string;
   is_active: boolean;
 }
@@ -30,7 +25,6 @@ export interface DepartmentCreate {
 export interface DepartmentUpdate {
   department_code?: string;
   department_name?: string;
-  organization_id?: number;
   description?: string;
   is_active?: boolean;
 }

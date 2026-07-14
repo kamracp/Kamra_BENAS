@@ -1,3 +1,7 @@
+from app.core.exceptions import (
+    DuplicateResourceException,
+    ResourceNotFoundException,
+)
 from app.models.building import Building
 from app.repositories.building_repository import BuildingRepository
 from app.schemas.building import BuildingCreate, BuildingUpdate
@@ -14,7 +18,7 @@ class BuildingService:
         building = self.repository.get_by_id(building_id)
 
         if building is None:
-            raise ValueError(f"Building '{building_id}' was not found.")
+            raise ResourceNotFoundException("Building", building_id)
 
         return building
 
@@ -22,8 +26,8 @@ class BuildingService:
         existing = self.repository.get_by_code(building.building_code)
 
         if existing:
-            raise ValueError(
-                f"Building code '{building.building_code}' already exists."
+            raise DuplicateResourceException(
+                "Building", "building_code", building.building_code,
             )
 
         return self.repository.create(building)
@@ -36,7 +40,7 @@ class BuildingService:
         db_building = self.repository.get_by_id(building_id)
 
         if db_building is None:
-            raise ValueError(f"Building '{building_id}' was not found.")
+            raise ResourceNotFoundException("Building", building_id)
 
         if (
             building.building_code
@@ -45,8 +49,8 @@ class BuildingService:
             existing = self.repository.get_by_code(building.building_code)
 
             if existing:
-                raise ValueError(
-                    f"Building code '{building.building_code}' already exists."
+                raise DuplicateResourceException(
+                    "Building", "building_code", building.building_code,
                 )
 
         return self.repository.update(db_building, building)
@@ -55,6 +59,6 @@ class BuildingService:
         db_building = self.repository.get_by_id(building_id)
 
         if db_building is None:
-            raise ValueError(f"Building '{building_id}' was not found.")
+            raise ResourceNotFoundException("Building", building_id)
 
         self.repository.delete(db_building)

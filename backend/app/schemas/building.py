@@ -6,7 +6,8 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class BuildingBase(BaseModel):
-    organization_id: int = Field(..., gt=0)
+    # NOTE: organization_id is intentionally NOT here.
+    # It is always taken from the authenticated user's JWT.
     building_code: str = Field(..., min_length=1, max_length=30)
     building_name: str = Field(..., min_length=1, max_length=200)
 
@@ -36,8 +37,6 @@ class BuildingCreate(BuildingBase):
 
 
 class BuildingUpdate(BaseModel):
-    organization_id: int | None = Field(default=None, gt=0)
-
     building_code: str | None = Field(
         default=None,
         min_length=1,
@@ -72,8 +71,9 @@ class BuildingUpdate(BaseModel):
 
 
 class BuildingResponse(BuildingBase):
+    model_config = ConfigDict(from_attributes=True)
+
     id: int
+    organization_id: int
     created_at: datetime
     updated_at: datetime
-
-    model_config = ConfigDict(from_attributes=True)

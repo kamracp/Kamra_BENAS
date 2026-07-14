@@ -4,7 +4,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class FloorBase(BaseModel):
-    organization_id: int
+    # organization_id comes from JWT, never from the client.
     building_id: int
 
     floor_code: str
@@ -44,10 +44,9 @@ class FloorUpdate(BaseModel):
 
 class FloorResponse(FloorBase):
     id: int
+    organization_id: int
 
     created_at: datetime
     updated_at: datetime
 
-    model_config = ConfigDict(
-        from_attributes=True,
-    )
+    model_config = ConfigDict(from_attributes=True)

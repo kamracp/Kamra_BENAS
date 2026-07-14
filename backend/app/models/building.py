@@ -9,6 +9,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -18,6 +19,14 @@ from app.database.base import Base
 
 class Building(Base):
     __tablename__ = "buildings"
+
+    __table_args__ = (
+        UniqueConstraint(
+            "organization_id",
+            "building_code",
+            name="uq_building_org_code",
+        ),
+    )
 
     id: Mapped[int] = mapped_column(
         Integer,
@@ -34,7 +43,6 @@ class Building(Base):
     building_code: Mapped[str] = mapped_column(
         String(30),
         nullable=False,
-        unique=True,
         index=True,
     )
 

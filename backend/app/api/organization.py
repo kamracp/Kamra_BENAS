@@ -1,88 +1,51 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.api.deps import get_current_user, require_admin
 from app.database.session import get_db
+from app.models.user import User
 from app.schemas.organization import (
-    OrganizationCreate,
     OrganizationResponse,
     OrganizationUpdate,
 )
-from app.services.organization_service import (
-    organization_service,
-)
+from app.services.organization_service import organization_service
 
 router = APIRouter(
     prefix="/organizations",
     tags=["Organizations"],
 )
 
-
-@router.get(
-    "/",
-    response_model=list[OrganizationResponse],
-)
-def get_organizations(
-    db: Session = Depends(get_db),
-):
-    return organization_service.get_all(db)
+# NOTE: Organization creation happens only via /auth/signup.
+# Listing all organizations is not allowed in multi-tenant mode.
 
 
 @router.get(
-    "/{organization_id}",
+    "/me",
     response_model=OrganizationResponse,
 )
-def get_organization(
-    organization_id: int,
+def get_my_organization(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
+    """Return the authenticated user's own organization."""
     return organization_service.get_by_id(
         db,
-        organization_id,
-    )
-
-
-@router.post(
-    "/",
-    response_model=OrganizationResponse,
-    status_code=status.HTTP_201_CREATED,
-)
-def create_organization(
-    payload: OrganizationCreate,
-    db: Session = Depends(get_db),
-):
-    return organization_service.create(
-        db,
-        payload,
+        current_user.organization_id,
     )
 
 
 @router.put(
-    "/{organization_id}",
+    "/me",
     response_model=OrganizationResponse,
 )
-def update_organization(
-    organization_id: int,
+def update_my_organization(
     payload: OrganizationUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(require_admin),
 ):
+    """Update own organization. Owner/admin only."""
     return organization_service.update(
         db,
-        organization_id,
+        current_user.organization_id,
         payload,
     )
-
-
-@router.delete(
-    "/{organization_id}",
-    status_code=status.HTTP_204_NO_CONTENT,
-)
-def delete_organization(
-    organization_id: int,
-    db: Session = Depends(get_db),
-):
-    organization_service.delete(
-        db,
-        organization_id,
-    )
-
-    return None

@@ -1,100 +1,69 @@
-from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.department import Department
-from app.schemas.department import (
-    DepartmentCreate,
-    DepartmentUpdate,
-)
+from app.schemas.department import DepartmentCreate, DepartmentUpdate
 
 
 class DepartmentRepository:
-    """Repository layer for Department."""
+    """All queries are scoped to a single organization (tenant)."""
 
-    def get_all(
-        self,
-        db: Session,
-    ) -> list[Department]:
+    def __init__(self, db: Session, organization_id: int):
+        self.db = db
+        self.organization_id = organization_id
+
+    def _base_query(self):
+        return self.db.query(Department).filter(
+            Department.organization_id == self.organization_id,
+        )
+
+    def get_all(self) -> list[Department]:
         return (
-            db.execute(
-                select(Department).order_by(
-                    Department.department_name
-                )
-            )
-            .scalars()
+            self._base_query()
+            .order_by(Department.department_name.asc())
             .all()
         )
 
-    def get_by_id(
-        self,
-        db: Session,
-        department_id: int,
-    ) -> Department | None:
-        return db.get(
-            Department,
-            department_id,
-        )
-
-    def get_by_code(
-        self,
-        db: Session,
-        department_code: str,
-    ) -> Department | None:
+    def get_by_id(self, department_id: int) -> Department | None:
         return (
-            db.execute(
-                select(Department).where(
-                    Department.department_code
-                    == department_code
-                )
-            )
-            .scalars()
+            self._base_query()
+            .filter(Department.id == department_id)
             .first()
         )
 
-    def create(
-        self,
-        db: Session,
-        payload: DepartmentCreate,
-    ) -> Department:
-        department = Department(
-            **payload.model_dump()
+    def get_by_code(self, department_code: str) -> Department | None:
+        return (
+            self._base_query()
+            .filter(Department.department_code == department_code)
+            .first()
         )
 
-        db.add(department)
-        db.commit()
-        db.refresh(department)
+    def create(self, department: DepartmentCreate) -> Department:
+        db_department = Department(
+            **department.model_dump(),
+            organization_id=self.organization_id,
+        )
 
-        return department
+        self.db.add(db_department)
+        self.db.commit()
+        self.db.refresh(db_department)
+
+        return db_department
 
     def update(
         self,
-        db: Session,
-        department: Department,
-        payload: DepartmentUpdate,
+        db_department: Department,
+        department: DepartmentUpdate,
     ) -> Department:
-        values = payload.model_dump(
-            exclude_unset=True
-        )
+        update_data = department.model_dump(exclude_unset=True)
 
-        for key, value in values.items():
-            setattr(
-                department,
-                key,
-                value,
-            )
+        for key, value in update_data.items():
+            setattr(db_department, key, value)
 
-        db.commit()
-        db.refresh(department)
+        self.db.commit()
+        self.db.refresh(db_department)
 
-        return department
+        return db_department
 
-    def delete(
-        self,
-        db: Session,
-        department: Department,
-    ) -> None:
-        db.delete(department)
-        db.commit()
-
-
-department_repository = DepartmentRepository()
+    def delete(self, db_department: Department) -> None:
+        self.db.delete(db_department)
+        self.db.commit()

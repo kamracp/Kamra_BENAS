@@ -9,6 +9,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
+    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -19,11 +20,15 @@ from app.database.base import Base
 class Space(Base):
     __tablename__ = "spaces"
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        primary_key=True,
-        index=True,
+    __table_args__ = (
+        UniqueConstraint(
+            "organization_id",
+            "space_code",
+            name="uq_space_org_code",
+        ),
     )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
     organization_id: Mapped[int] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
@@ -45,20 +50,13 @@ class Space(Base):
 
     space_code: Mapped[str] = mapped_column(
         String(30),
-        unique=True,
         nullable=False,
         index=True,
     )
 
-    space_name: Mapped[str] = mapped_column(
-        String(150),
-        nullable=False,
-    )
+    space_name: Mapped[str] = mapped_column(String(150), nullable=False)
 
-    space_type: Mapped[str | None] = mapped_column(
-        String(100),
-        nullable=True,
-    )
+    space_type: Mapped[str | None] = mapped_column(String(100), nullable=True)
 
     usage_category: Mapped[str | None] = mapped_column(
         String(100),
@@ -70,10 +68,7 @@ class Space(Base):
         nullable=True,
     )
 
-    remarks: Mapped[str | None] = mapped_column(
-        Text,
-        nullable=True,
-    )
+    remarks: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     is_active: Mapped[bool] = mapped_column(
         Boolean,
@@ -94,16 +89,11 @@ class Space(Base):
         nullable=False,
     )
 
-    organization = relationship(
-        "Organization",
-    )
+    organization = relationship("Organization")
 
-    building = relationship(
-        "Building",
-    )
+    building = relationship("Building")
 
     floor = relationship(
         "Floor",
         back_populates="spaces",
     )
-    

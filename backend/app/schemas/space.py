@@ -4,8 +4,8 @@ from pydantic import BaseModel, ConfigDict
 
 
 class SpaceBase(BaseModel):
-    organization_id: int
-    building_id: int
+    # organization_id comes from JWT.
+    # building_id is derived server-side from the floor.
     floor_id: int
 
     space_code: str
@@ -36,11 +36,12 @@ class SpaceUpdate(BaseModel):
     remarks: str | None = None
     is_active: bool | None = None
 
-    model_config = ConfigDict(from_attributes=True)
-
 
 class SpaceResponse(SpaceBase):
     id: int
+    organization_id: int
+    building_id: int
+
     created_at: datetime
     updated_at: datetime
 

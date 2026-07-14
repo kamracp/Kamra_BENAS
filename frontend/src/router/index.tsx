@@ -1,54 +1,60 @@
-import DepartmentList from "../features/departments/pages/DepartmentList";
-import { CampusList } from '../features/campuses/components/CampusList';
-import OrganizationList from "../features/organizations/pages/OrganizationList";
 import { Navigate, Route, Routes } from "react-router-dom";
 
+import ProtectedRoute from "../components/ProtectedRoute";
 import MainLayout from "../layouts/MainLayout";
 
-import Dashboard from "../pages/Dashboard";
+import DepartmentList from "../features/departments/pages/DepartmentList";
+import MyOrganization from "../features/organizations/pages/MyOrganization";
+
 import ComingSoon from "../pages/ComingSoon";
+import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
 import NotFound from "../pages/NotFound";
+import Signup from "../pages/Signup";
 
 export default function AppRouter() {
   return (
     <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route index element={<Navigate to="/dashboard" replace />} />
+      {/* Public routes */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/signup" element={<Signup />} />
 
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route
-         path="organizations"
-        element={<OrganizationList />}
-/>
+      {/* Protected routes */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
 
-<Route
-  path="departments"
-  element={<DepartmentList />}
-/>
-       
+          <Route path="dashboard" element={<Dashboard />} />
 
-        <Route path="buildings" element={<ComingSoon title="Buildings" />} />
+          <Route path="organizations" element={<MyOrganization />} />
 
-        <Route path="utilities" element={<ComingSoon title="Utilities" />} />
+          <Route path="departments" element={<DepartmentList />} />
 
-        <Route path="energy" element={<ComingSoon title="Energy Intelligence" />} />
+          <Route path="buildings" element={<ComingSoon title="Buildings" />} />
 
-        <Route path="hvac" element={<ComingSoon title="HVAC Analytics" />} />
+          <Route path="utilities" element={<ComingSoon title="Utilities" />} />
 
-        <Route path="electrical" element={<ComingSoon title="Electrical Analytics" />} />
+          <Route
+            path="energy"
+            element={<ComingSoon title="Energy Intelligence" />}
+          />
 
-        <Route path="water" element={<ComingSoon title="Water Analytics" />} />
+          <Route path="hvac" element={<ComingSoon title="HVAC Analytics" />} />
 
-        <Route path="carbon" element={<ComingSoon title="Carbon Accounting" />} />
+          <Route
+            path="electrical"
+            element={<ComingSoon title="Electrical Analytics" />}
+          />
 
-        <Route path="esg" element={<ComingSoon title="ESG Reporting" />} />
+          <Route path="water" element={<ComingSoon title="Water Analytics" />} />
+
+          <Route path="carbon" element={<ComingSoon title="Carbon Accounting" />} />
+
+          <Route path="esg" element={<ComingSoon title="ESG Reporting" />} />
+        </Route>
       </Route>
 
-      <Route path="/login" element={<Login />} />
-
       <Route path="*" element={<NotFound />} />
-      <Route path="/campuses" element={<CampusList />} />
     </Routes>
   );
 }

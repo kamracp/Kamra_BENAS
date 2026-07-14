@@ -5,11 +5,12 @@ from datetime import datetime
 from sqlalchemy import (
     Boolean,
     DateTime,
-    ForeignKey,
     Float,
+    ForeignKey,
     Integer,
     String,
     Text,
+    UniqueConstraint,
     func,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -20,11 +21,15 @@ from app.database.base import Base
 class Floor(Base):
     __tablename__ = "floors"
 
-    id: Mapped[int] = mapped_column(
-        Integer,
-        primary_key=True,
-        index=True,
+    __table_args__ = (
+        UniqueConstraint(
+            "organization_id",
+            "floor_code",
+            name="uq_floor_org_code",
+        ),
     )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
 
     organization_id: Mapped[int] = mapped_column(
         ForeignKey("organizations.id", ondelete="CASCADE"),
@@ -40,45 +45,29 @@ class Floor(Base):
 
     floor_code: Mapped[str] = mapped_column(
         String(30),
-        unique=True,
         nullable=False,
         index=True,
     )
 
-    floor_name: Mapped[str] = mapped_column(
-        String(150),
-        nullable=False,
-    )
+    floor_name: Mapped[str] = mapped_column(String(150), nullable=False)
 
-    floor_number: Mapped[int] = mapped_column(
-        Integer,
-        nullable=False,
-    )
+    floor_number: Mapped[int] = mapped_column(Integer, nullable=False)
 
-    gross_area_sqm: Mapped[float | None] = mapped_column(
-        Float,
-        nullable=True,
-    )
+    gross_area_sqm: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     conditioned_area_sqm: Mapped[float | None] = mapped_column(
         Float,
         nullable=True,
     )
 
-    clear_height_m: Mapped[float | None] = mapped_column(
-        Float,
-        nullable=True,
-    )
+    clear_height_m: Mapped[float | None] = mapped_column(Float, nullable=True)
 
     occupancy_capacity: Mapped[int | None] = mapped_column(
         Integer,
         nullable=True,
     )
 
-    remarks: Mapped[str | None] = mapped_column(
-        Text,
-        nullable=True,
-    )
+    remarks: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     is_active: Mapped[bool] = mapped_column(
         Boolean,
@@ -99,15 +88,15 @@ class Floor(Base):
         nullable=False,
     )
 
-    organization = relationship(
-        "Organization",
-)
+    organization = relationship("Organization")
 
     building = relationship(
         "Building",
-         back_populates="floors",
-)    
+        back_populates="floors",
+    )
+
     spaces = relationship(
-            "Space",
-            back_populates="floor",
+        "Space",
+        back_populates="floor",
+        cascade="all, delete-orphan",
     )

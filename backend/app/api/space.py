@@ -1,13 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from fastapi import APIRouter, Depends, Query, Response, status
 from sqlalchemy.orm import Session
 
+from app.api.deps import get_current_user, require_writer
 from app.database.session import get_db
+from app.models.user import User
 from app.repositories.space_repository import SpaceRepository
-from app.schemas.space import (
-    SpaceCreate,
-    SpaceResponse,
-    SpaceUpdate,
-)
+from app.schemas.space import SpaceCreate, SpaceResponse, SpaceUpdate
 from app.services.space_service import SpaceService
 
 router = APIRouter(
@@ -16,101 +14,68 @@ router = APIRouter(
 )
 
 
-def get_service(db: Session = Depends(get_db)) -> SpaceService:
-    repository = SpaceRepository(db)
+def get_service(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> SpaceService:
+    repository = SpaceRepository(
+        db,
+        organization_id=current_user.organization_id,
+    )
     return SpaceService(repository)
 
 
-@router.get(
-    "/",
-    response_model=list[SpaceResponse],
-)
+@router.get("/", response_model=list[SpaceResponse])
 def get_spaces(
+    floor_id: int | None = Query(default=None),
+    building_id: int | None = Query(default=None),
     service: SpaceService = Depends(get_service),
 ):
-    return service.get_spaces()
+    return service.get_all(floor_id, building_id)
 
 
-@router.get(
-    "/{space_id}",
-    response_model=SpaceResponse,
-)
+@router.get("/{space_id}", response_model=SpaceResponse)
 def get_space(
     space_id: int,
     service: SpaceService = Depends(get_service),
 ):
-    try:
-        return service.get_space(space_id)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(exc),
-        ) from exc
+    return service.get_by_id(space_id)
 
 
 @router.post(
     "/",
     response_model=SpaceResponse,
     status_code=status.HTTP_201_CREATED,
+    dependencies=[Depends(require_writer)],
 )
 def create_space(
     space: SpaceCreate,
     service: SpaceService = Depends(get_service),
 ):
-    try:
-        return service.create_space(space)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(exc),
-        ) from exc
+    return service.create(space)
 
 
 @router.put(
     "/{space_id}",
     response_model=SpaceResponse,
+    dependencies=[Depends(require_writer)],
 )
 def update_space(
     space_id: int,
     space: SpaceUpdate,
     service: SpaceService = Depends(get_service),
 ):
-    try:
-        return service.update_space(
-            space_id,
-            space,
-        )
-    except ValueError as exc:
-        message = str(exc)
-
-        status_code = (
-            status.HTTP_404_NOT_FOUND
-            if "not found" in message.lower()
-            else status.HTTP_400_BAD_REQUEST
-        )
-
-        raise HTTPException(
-            status_code=status_code,
-            detail=message,
-        ) from exc
+    return service.update(space_id, space)
 
 
 @router.delete(
     "/{space_id}",
     status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(require_writer)],
 )
 def delete_space(
     space_id: int,
     service: SpaceService = Depends(get_service),
 ):
-    try:
-        service.delete_space(space_id)
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=str(exc),
-        ) from exc
-
-    return Response(
-        status_code=status.HTTP_204_NO_CONTENT,
-    )
+    service.delete(space_id)
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
