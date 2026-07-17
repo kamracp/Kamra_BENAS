@@ -134,3 +134,8 @@ class Building(Base):
         back_populates="building",
         cascade="all, delete-orphan",
     )
+    energy_meters = relationship(
+        "EnergyMeter",
+        back_populates="building",
+        cascade="all, delete-orphan",
+    )

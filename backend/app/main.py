@@ -10,6 +10,8 @@ from app.models.department import Department
 from app.models.building import Building
 from app.models.floor import Floor
 from app.models.space import Space
+from app.models.energy_meter import EnergyMeter
+from app.models.utility_bill import UtilityBill
 
 Base.metadata.create_all(bind=engine)
 
