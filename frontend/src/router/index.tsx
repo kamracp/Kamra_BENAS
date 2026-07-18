@@ -4,6 +4,7 @@ import ProtectedRoute from "../components/ProtectedRoute";
 import MainLayout from "../layouts/MainLayout";
 
 import DepartmentList from "../features/departments/pages/DepartmentList";
+import EnergyMeterList from "../features/energy/pages/EnergyMeterList";
 import MyOrganization from "../features/organizations/pages/MyOrganization";
 
 import ComingSoon from "../pages/ComingSoon";
@@ -25,10 +26,12 @@ export default function AppRouter() {
           <Route index element={<Navigate to="/dashboard" replace />} />
 
           <Route path="dashboard" element={<Dashboard />} />
+          
 
           <Route path="organizations" element={<MyOrganization />} />
 
           <Route path="departments" element={<DepartmentList />} />
+          <Route path="energy-meters" element={<EnergyMeterList />} />
 
           <Route path="buildings" element={<ComingSoon title="Buildings" />} />
 

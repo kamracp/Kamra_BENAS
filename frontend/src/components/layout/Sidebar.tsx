@@ -11,6 +11,7 @@ import {
   Leaf,
   BarChart3,
   LayoutDashboard,
+  Activity,
 } from "lucide-react";
 
 const menu = [
@@ -34,6 +35,12 @@ const menu = [
     title: "Buildings",
     icon: Factory,
     path: "/buildings",
+  },
+
+  {
+    title: "Energy Meters",
+    icon: Activity,
+    path: "/energy-meters",
   },
   {
     title: "Utilities",
