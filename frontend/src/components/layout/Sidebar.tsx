@@ -9,9 +9,10 @@ import {
   Cpu,
   Droplets,
   Leaf,
-  BarChart3,
+  BarChart3,  
   LayoutDashboard,
   Activity,
+  Receipt,
 } from "lucide-react";
 
 const menu = [
@@ -41,6 +42,12 @@ const menu = [
     title: "Energy Meters",
     icon: Activity,
     path: "/energy-meters",
+  },
+
+  {
+    title: "Utility Bills",
+    icon: Receipt,
+    path: "/utility-bills",
   },
   {
     title: "Utilities",

@@ -5,6 +5,7 @@ import MainLayout from "../layouts/MainLayout";
 
 import DepartmentList from "../features/departments/pages/DepartmentList";
 import EnergyMeterList from "../features/energy/pages/EnergyMeterList";
+import UtilityBillList from "../features/energy/pages/UtilityBillList";
 import MyOrganization from "../features/organizations/pages/MyOrganization";
 
 import ComingSoon from "../pages/ComingSoon";
@@ -32,7 +33,7 @@ export default function AppRouter() {
 
           <Route path="departments" element={<DepartmentList />} />
           <Route path="energy-meters" element={<EnergyMeterList />} />
-
+        <Route path="utility-bills" element={<UtilityBillList />} />
           <Route path="buildings" element={<ComingSoon title="Buildings" />} />
 
           <Route path="utilities" element={<ComingSoon title="Utilities" />} />
