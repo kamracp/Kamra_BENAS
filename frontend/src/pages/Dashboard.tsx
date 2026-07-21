@@ -1,27 +1,35 @@
-const kpis = [
-  {
-    title: "Organizations",
-    value: "0",
-    color: "bg-blue-50 border-blue-200",
-  },
-  {
-    title: "Buildings",
-    value: "0",
-    color: "bg-green-50 border-green-200",
-  },
-  {
-    title: "Electricity",
-    value: "0 kWh",
-    color: "bg-yellow-50 border-yellow-200",
-  },
-  {
-    title: "Carbon",
-    value: "0 tCO₂e",
-    color: "bg-red-50 border-red-200",
-  },
-];
-
+import { useCarbonSummary } from "../features/carbon/hooks/useCarbonSummary";
 export default function Dashboard() {
+  const { data: carbon } = useCarbonSummary();
+
+  const totalTonnes = carbon?.total_co2e_tonnes ?? 0;
+  const electricityKwh = (carbon?.line_items ?? [])
+    .filter((item) => item.meter_type === "electricity")
+    .reduce((sum, item) => sum + item.consumption, 0);
+
+  const kpis = [
+    {
+      title: "Organizations",
+      value: "0",
+      color: "bg-blue-50 border-blue-200",
+    },
+    {
+      title: "Buildings",
+      value: "0",
+      color: "bg-green-50 border-green-200",
+    },
+    {
+      title: "Electricity",
+      value: `${electricityKwh.toLocaleString("en-IN")} kWh`,
+      color: "bg-yellow-50 border-yellow-200",
+    },
+    {
+      title: "Carbon",
+      value: `${totalTonnes} tCO₂e`,
+      color: "bg-red-50 border-red-200",
+    },
+  ];
+
   return (
     <div className="space-y-6">
 
@@ -156,11 +164,17 @@ export default function Dashboard() {
 
           <div className="mt-5 space-y-4">
 
-            <div>Scope 1 : 0 tCO₂e</div>
+            <div>
+              Scope 1 : {((carbon?.by_scope_kg.scope_1 ?? 0) / 1000).toFixed(3)} tCO₂e
+            </div>
 
-            <div>Scope 2 : 0 tCO₂e</div>
+            <div>
+              Scope 2 : {((carbon?.by_scope_kg.scope_2 ?? 0) / 1000).toFixed(3)} tCO₂e
+            </div>
 
-            <div>Scope 3 : 0 tCO₂e</div>
+            <div>
+              Scope 3 : {((carbon?.by_scope_kg.scope_3 ?? 0) / 1000).toFixed(3)} tCO₂e
+            </div>
 
           </div>
 
