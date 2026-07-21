@@ -12,8 +12,9 @@ from app.models.floor import Floor
 from app.models.space import Space
 from app.models.energy_meter import EnergyMeter
 from app.models.utility_bill import UtilityBill
+from app.models.emission_factor import EmissionFactor
 
-Base.metadata.create_all(bind=engine)
+
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
