@@ -22,21 +22,27 @@ METER_TYPES = (
     "diesel",
     "natural_gas",
     "lpg",
+    "coal",
+    "furnace_oil",
+    "biomass",
     "water",
     "solar_generation",
     "other",
 )
 
 # Allowed measurement units per meter reading / bill consumption.
-METER_UNITS = (
-    "kWh",
-    "litres",
-    "kg",
-    "SCM",
-    "m3",
-    "MMBtu",
-    "other",
-)
+METER_TYPE_SCOPE_MAP = {
+    "electricity": "scope_2",
+    "diesel": "scope_1",
+    "natural_gas": "scope_1",
+    "lpg": "scope_1",
+    "coal": "scope_1",
+    "furnace_oil": "scope_1",
+    "biomass": "scope_1",
+    "water": "other",
+    "solar_generation": "renewable",
+    "other": "other",
+}
 
 # GHG Protocol scope classification (structural mapping, not a factor).
 # Emission FACTORS are never stored here — they come from

@@ -1,7 +1,7 @@
 """Seed the emission factor library with source-verified official values.
 
 BENAS rule: every value below is taken from an official publication
-(CEA / DEFRA / IPCC) — never invented. Run from backend/ with venv:
+(CEA / DEFRA / IPCC) -- never invented. Run from backend/ with venv:
     python3 seed_factors.py
 Safe to re-run: existing (source, source_year, meter_type) rows are skipped.
 """
@@ -53,7 +53,7 @@ FACTORS = [
         is_active=True,
         notes=(
             "Location-based Scope 2 factor (GHG Protocol). One secondary "
-            "source cites 0.710 provisional — verify against official CEA "
+            "source cites 0.710 provisional -- verify against official CEA "
             "Excel before formal disclosure."
         ),
     ),
@@ -64,15 +64,108 @@ FACTORS = [
         region="IN",
         source="UK Government GHG Conversion Factors for Company Reporting 2025 (DEFRA/DESNZ)",
         source_year=2025,
-        document_reference="Fuels — Diesel (average biofuel blend), kgCO2e per litre",
+        document_reference="Fuels -- Diesel (average biofuel blend), kgCO2e per litre",
         valid_from=date(2025, 1, 1),
         valid_to=None,
         is_active=True,
         notes=(
             "Scope 1 (DG sets). DEFRA fuel combustion factors are globally "
             "applicable. Average biofuel blend; 100% mineral diesel factor "
-            "is slightly higher — to be verified and added if needed."
+            "is slightly higher -- to be verified and added if needed."
         ),
+    ),
+    EmissionFactorCreate(
+        meter_type="coal",
+        unit="kg",
+        factor_kgco2e_per_unit=2.441,
+        region="IN",
+        source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
+        source_year=2006,
+        document_reference=(
+            "Vol 2 Ch 1 Table 1.2 (NCV, Other Bituminous Coal, 25.8 GJ/tonne) "
+            "x Vol 2 Ch 2 Table 2.2 (CO2 factor, 94.6 kgCO2/GJ) -- Tier 1 generic default"
+        ),
+        valid_from=date(2006, 1, 1),
+        valid_to=None,
+        is_active=True,
+        notes=(
+            "Scope 1 (Boiler/Furnace). GENERIC DEFAULT -- not calibrated to actual "
+            "coal grade/GCV. Refine with plant-specific GCV certificate when known. "
+            "CO2-only Tier 1 approximation (CH4/N2O contribution excluded, negligible)."
+        ),
+    ),
+    EmissionFactorCreate(
+        meter_type="furnace_oil",
+        unit="kg",
+        factor_kgco2e_per_unit=3.127,
+        region="IN",
+        source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
+        source_year=2006,
+        document_reference=(
+            "Vol 2 Ch 1 Table 1.2 (NCV, Residual Fuel Oil, 40.4 GJ/tonne) "
+            "x Vol 2 Ch 2 Table 2.2 (CO2 factor, 77.4 kgCO2/GJ) -- Tier 1 generic default"
+        ),
+        valid_from=date(2006, 1, 1),
+        valid_to=None,
+        is_active=True,
+        notes="Scope 1 (Boiler/Furnace). Generic default, CO2-only Tier 1 approximation.",
+    ),
+    EmissionFactorCreate(
+        meter_type="biomass",
+        unit="kg",
+        factor_kgco2e_per_unit=1.747,
+        region="IN",
+        source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
+        source_year=2006,
+        document_reference=(
+            "Vol 2 Ch 1 Table 1.2 (NCV, Wood/Wood Waste, 15.6 GJ/tonne) "
+            "x Vol 2 Ch 2 Table 2.2 (CO2 factor, 112 kgCO2/GJ) -- Tier 1 generic default"
+        ),
+        valid_from=date(2006, 1, 1),
+        valid_to=None,
+        is_active=True,
+        notes=(
+            "KNOWN LIMITATION -- biogenic CO2: per GHG Protocol, biomass combustion "
+            "CO2 is conventionally biogenic and reported separately from the fossil "
+            "Scope 1 total (only its CH4/N2O counts toward compliance totals). This "
+            "factor currently feeds into scope_1 like a fossil fuel pending a proper "
+            "biogenic-accounting fix (planned for Phase 9 / BRSR-CSRD hardening)."
+        ),
+    ),
+    EmissionFactorCreate(
+        meter_type="natural_gas",
+        unit="SCM",
+        factor_kgco2e_per_unit=2.041,
+        region="IN",
+        source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
+        source_year=2006,
+        document_reference=(
+            "Vol 2 Ch 1 Table 1.2 (NCV, Natural Gas, ~36.4 MJ/SCM typical) "
+            "x Vol 2 Ch 2 Table 2.2 (CO2 factor, 56.1 kgCO2/GJ) -- Tier 1 generic default"
+        ),
+        valid_from=date(2006, 1, 1),
+        valid_to=None,
+        is_active=True,
+        notes=(
+            "Scope 1 (Boiler/Furnace/heating). GENERIC DEFAULT -- refine with actual "
+            "gas supplier's calorific value certificate when known."
+        ),
+    ),
+    EmissionFactorCreate(
+        meter_type="lpg",
+        unit="kg",
+        factor_kgco2e_per_unit=2.985,
+        region="IN",
+        source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
+        source_year=2006,
+        document_reference=(
+            "Vol 2 Ch 1 Table 1.2 (NCV, LPG, 47.3 GJ/tonne) "
+            "x Vol 2 Ch 2 Table 2.2 (CO2 factor, 63.1 kgCO2/GJ) -- Tier 1 generic default"
+        ),
+        valid_from=date(2006, 1, 1),
+        valid_to=None,
+        is_active=True,
+        notes="Scope 1 (Boiler/Furnace/DG). Generic default, CO2-only Tier 1 approximation.",
     ),
 ]
 
@@ -106,7 +199,7 @@ def main() -> None:
                 f"kgCO2e/unit [{created.source}]"
             )
 
-        # ── Live test: which factor applies to the June-2026 bill? ──
+        # -- Live test: which factor applies to the June-2026 bill? --
         print()
         print("TEST: electricity / kWh / IN on 2026-06-15 ->")
         picked = service.get_applicable_factor(
