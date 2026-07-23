@@ -13,6 +13,8 @@ from app.models.space import Space
 from app.models.energy_meter import EnergyMeter
 from app.models.utility_bill import UtilityBill
 from app.models.emission_factor import EmissionFactor
+from app.models.hvac_equipment import HvacEquipment
+from app.models.occupant import Occupant
 
 
 

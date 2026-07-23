@@ -7,7 +7,10 @@ import DepartmentList from "../features/departments/pages/DepartmentList";
 import EnergyMeterList from "../features/energy/pages/EnergyMeterList";
 import UtilityBillList from "../features/energy/pages/UtilityBillList";
 import MyOrganization from "../features/organizations/pages/MyOrganization";
-
+import BuildingList from "../features/buildings/pages/BuildingList";
+import HvacEquipmentList from "../features/hvac-equipment/pages/HvacEquipmentList";
+import TenantBillingPage from "../features/tenant-billing/pages/TenantBillingPage";
+import FloorList from "../features/floors/pages/FloorList";
 import ComingSoon from "../pages/ComingSoon";
 import Dashboard from "../pages/Dashboard";
 import Login from "../pages/Login";
@@ -34,7 +37,7 @@ export default function AppRouter() {
           <Route path="departments" element={<DepartmentList />} />
           <Route path="energy-meters" element={<EnergyMeterList />} />
         <Route path="utility-bills" element={<UtilityBillList />} />
-          <Route path="buildings" element={<ComingSoon title="Buildings" />} />
+          <Route path="buildings" element={<BuildingList />} />
 
           <Route path="utilities" element={<ComingSoon title="Utilities" />} />
 
@@ -43,8 +46,9 @@ export default function AppRouter() {
             element={<ComingSoon title="Energy Intelligence" />}
           />
 
-          <Route path="hvac" element={<ComingSoon title="HVAC Analytics" />} />
-
+          <Route path="hvac" element={<HvacEquipmentList />} />
+          <Route path="tenant-billing" element={<TenantBillingPage />} />
+          <Route path="floors" element={<FloorList />} />
           <Route
             path="electrical"
             element={<ComingSoon title="Electrical Analytics" />}

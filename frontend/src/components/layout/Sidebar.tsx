@@ -13,6 +13,7 @@ import {
   LayoutDashboard,
   Activity,
   Receipt,
+  Layers,
 } from "lucide-react";
 
 const menu = [
@@ -63,6 +64,16 @@ const menu = [
     title: "HVAC",
     icon: Wind,
     path: "/hvac",
+  },
+  {
+    title: "Tenant Billing",
+    icon: Receipt,
+    path: "/tenant-billing",
+  },
+  {
+    title: "Floors",
+    icon: Layers,
+    path: "/floors",
   },
   {
     title: "Electrical",
