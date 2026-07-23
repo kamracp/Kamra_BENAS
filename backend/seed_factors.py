@@ -21,6 +21,7 @@ FACTORS = [
         meter_type="electricity",
         unit="kWh",
         factor_kgco2e_per_unit=0.727,
+        energy_content_gj_per_unit=0.0036,
         region="IN",
         source="CEA CO2 Baseline Database for the Indian Power Sector, Version 20.0",
         source_year=2024,
@@ -33,13 +34,15 @@ FACTORS = [
         is_active=True,
         notes=(
             "Location-based Scope 2 factor (GHG Protocol). Superseded by "
-            "V21.0 from Nov 2025."
+            "V21.0 from Nov 2025. energy_content_gj_per_unit: physical "
+            "constant (1 kWh = 3.6 MJ)."
         ),
     ),
     EmissionFactorCreate(
         meter_type="electricity",
         unit="kWh",
         factor_kgco2e_per_unit=0.7117,
+        energy_content_gj_per_unit=0.0036,
         region="IN",
         source="CEA CO2 Baseline Database for the Indian Power Sector, Version 21.0",
         source_year=2025,
@@ -54,13 +57,15 @@ FACTORS = [
         notes=(
             "Location-based Scope 2 factor (GHG Protocol). One secondary "
             "source cites 0.710 provisional -- verify against official CEA "
-            "Excel before formal disclosure."
+            "Excel before formal disclosure. energy_content_gj_per_unit: "
+            "physical constant (1 kWh = 3.6 MJ)."
         ),
     ),
     EmissionFactorCreate(
         meter_type="diesel",
         unit="litres",
         factor_kgco2e_per_unit=2.57082,
+        energy_content_gj_per_unit=0.0363,
         region="IN",
         source="UK Government GHG Conversion Factors for Company Reporting 2025 (DEFRA/DESNZ)",
         source_year=2025,
@@ -71,13 +76,16 @@ FACTORS = [
         notes=(
             "Scope 1 (DG sets). DEFRA fuel combustion factors are globally "
             "applicable. Average biofuel blend; 100% mineral diesel factor "
-            "is slightly higher -- to be verified and added if needed."
+            "is slightly higher -- to be verified and added if needed. "
+            "energy_content_gj_per_unit: IPCC 2006 NCV 43.0 GJ/tonne x "
+            "density 0.845 kg/l, generic default."
         ),
     ),
     EmissionFactorCreate(
         meter_type="coal",
         unit="kg",
         factor_kgco2e_per_unit=2.441,
+        energy_content_gj_per_unit=0.0258,
         region="IN",
         source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
         source_year=2006,
@@ -98,6 +106,7 @@ FACTORS = [
         meter_type="furnace_oil",
         unit="kg",
         factor_kgco2e_per_unit=3.127,
+        energy_content_gj_per_unit=0.0404,
         region="IN",
         source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
         source_year=2006,
@@ -114,6 +123,7 @@ FACTORS = [
         meter_type="biomass",
         unit="kg",
         factor_kgco2e_per_unit=1.747,
+        energy_content_gj_per_unit=0.0156,
         region="IN",
         source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
         source_year=2006,
@@ -127,7 +137,7 @@ FACTORS = [
         notes=(
             "KNOWN LIMITATION -- biogenic CO2: per GHG Protocol, biomass combustion "
             "CO2 is conventionally biogenic and reported separately from the fossil "
-            "Scope 1 total (only its CH4/N2O counts toward compliance totals). This "
+            "Scope 1 total (only its CH4/N2O counts toward compliance total). This "
             "factor currently feeds into scope_1 like a fossil fuel pending a proper "
             "biogenic-accounting fix (planned for Phase 9 / BRSR-CSRD hardening)."
         ),
@@ -136,6 +146,7 @@ FACTORS = [
         meter_type="natural_gas",
         unit="SCM",
         factor_kgco2e_per_unit=2.041,
+        energy_content_gj_per_unit=0.0364,
         region="IN",
         source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
         source_year=2006,
@@ -155,6 +166,7 @@ FACTORS = [
         meter_type="lpg",
         unit="kg",
         factor_kgco2e_per_unit=2.985,
+        energy_content_gj_per_unit=0.0473,
         region="IN",
         source="IPCC 2006 Guidelines for National Greenhouse Gas Inventories",
         source_year=2006,
@@ -199,7 +211,6 @@ def main() -> None:
                 f"kgCO2e/unit [{created.source}]"
             )
 
-        # -- Live test: which factor applies to the June-2026 bill? --
         print()
         print("TEST: electricity / kWh / IN on 2026-06-15 ->")
         picked = service.get_applicable_factor(

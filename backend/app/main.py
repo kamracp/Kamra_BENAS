@@ -15,6 +15,8 @@ from app.models.utility_bill import UtilityBill
 from app.models.emission_factor import EmissionFactor
 from app.models.hvac_equipment import HvacEquipment
 from app.models.occupant import Occupant
+from app.models.manufacturing_unit import ManufacturingUnit
+from app.models.production_record import ProductionRecord
 
 
 
@@ -22,8 +24,8 @@ from app.models.occupant import Occupant
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
-    title="Kamra BENAS API",
-    description="Building Energy Performance & Net-Zero Accounting System",
+    title="Kamra ISOS API",
+    description="Industrial Sustainability Operating System (includes BENAS Building/Real-Estate module and Manufacturing module)",
     version="0.1.0",
 )
 

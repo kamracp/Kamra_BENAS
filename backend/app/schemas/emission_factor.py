@@ -18,6 +18,7 @@ class EmissionFactorBase(BaseModel):
     # Must match the meter's consumption unit (kWh, litres, SCM, kg ...).
     unit: str = Field(..., min_length=1, max_length=20)
     factor_kgco2e_per_unit: float = Field(..., ge=0)
+    energy_content_gj_per_unit: float | None = Field(default=None, ge=0)
     region: str = Field(default="IN", min_length=2, max_length=10)
     source: str = Field(..., min_length=3, max_length=200)
     source_year: int = Field(..., ge=1990, le=2100)
@@ -45,6 +46,7 @@ class EmissionFactorUpdate(BaseModel):
     meter_type: str | None = Field(default=None, min_length=1, max_length=50)
     unit: str | None = Field(default=None, min_length=1, max_length=20)
     factor_kgco2e_per_unit: float | None = Field(default=None, ge=0)
+    energy_content_gj_per_unit: float | None = Field(default=None, ge=0)
     region: str | None = Field(default=None, min_length=2, max_length=10)
     source: str | None = Field(default=None, min_length=3, max_length=200)
     source_year: int | None = Field(default=None, ge=1990, le=2100)

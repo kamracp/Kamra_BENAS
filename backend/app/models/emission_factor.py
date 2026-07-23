@@ -57,7 +57,13 @@ class EmissionFactor(Base):
         Float,
         nullable=False,
     )
-
+# Energy content of one unit, in Gigajoules -- used for SEC (BEE PAT)
+    # / EnPI (ISO 50001) calculations: Total Energy (GJ) / Production.
+    # Nullable because not every factor row needs it (e.g. water).
+    energy_content_gj_per_unit: Mapped[float | None] = mapped_column(
+        Float,
+        nullable=True,
+    )
     # ISO country code the factor applies to (grid factors are national).
     region: Mapped[str] = mapped_column(
         String(10),

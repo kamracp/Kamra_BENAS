@@ -1,6 +1,4 @@
-
 from fastapi import APIRouter
-
 from app.api.auth import router as auth_router
 from app.api.organization import router as organization_router
 from app.api.department import router as department_router
@@ -14,9 +12,10 @@ from app.api.carbon import router as carbon_router
 from app.api.hvac_equipment import router as hvac_equipment_router
 from app.api.occupant import router as occupant_router
 from app.api.tenant_billing import router as tenant_billing_router
+from app.api.manufacturing_unit import router as manufacturing_unit_router
+from app.api.production_record import router as production_record_router
 
 api_router = APIRouter()
-
 api_router.include_router(auth_router)
 api_router.include_router(organization_router)
 api_router.include_router(department_router)
@@ -30,4 +29,5 @@ api_router.include_router(carbon_router)
 api_router.include_router(hvac_equipment_router)
 api_router.include_router(occupant_router)
 api_router.include_router(tenant_billing_router)
-
+api_router.include_router(manufacturing_unit_router)
+api_router.include_router(production_record_router)
