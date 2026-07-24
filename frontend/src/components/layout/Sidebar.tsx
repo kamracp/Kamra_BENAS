@@ -14,8 +14,9 @@ import {
   Activity,
   Receipt,
   Layers,
+  Boxes,
+  ClipboardList,
 } from "lucide-react";
-
 const menu = [
   {
     title: "Dashboard",
@@ -32,19 +33,16 @@ const menu = [
   icon: Users,
   path: "/departments",
 },
-
   {
     title: "Buildings",
     icon: Factory,
     path: "/buildings",
   },
-
   {
     title: "Energy Meters",
     icon: Activity,
     path: "/energy-meters",
   },
-
   {
     title: "Utility Bills",
     icon: Receipt,
@@ -76,6 +74,16 @@ const menu = [
     path: "/floors",
   },
   {
+    title: "Manufacturing Units",
+    icon: Boxes,
+    path: "/manufacturing-units",
+  },
+  {
+    title: "Production Records",
+    icon: ClipboardList,
+    path: "/production-records",
+  },
+  {
     title: "Electrical",
     icon: Cpu,
     path: "/electrical",
@@ -99,26 +107,18 @@ const menu = [
 export default function Sidebar() {
   return (
     <aside className="w-72 bg-slate-900 text-white flex flex-col">
-
       <div className="border-b border-slate-700 p-6">
-
         <h1 className="text-2xl font-bold">
-          BENAS
+          ISOS
         </h1>
-
         <p className="mt-1 text-xs text-slate-400">
           Kamra Engineering Solutions
         </p>
-
       </div>
-
       <nav className="flex-1 overflow-y-auto p-4">
-
         <div className="space-y-2">
-
           {menu.map((item) => {
             const Icon = item.icon;
-
             return (
               <NavLink
                 key={item.path}
@@ -132,32 +132,22 @@ export default function Sidebar() {
                 }
               >
                 <Icon size={20} />
-
                 <span>{item.title}</span>
               </NavLink>
             );
           })}
-
         </div>
-
       </nav>
-
       <div className="border-t border-slate-700 p-5">
-
         <div className="rounded-lg bg-slate-800 p-4">
-
           <p className="text-sm font-semibold">
             Version
           </p>
-
           <p className="mt-1 text-xs text-slate-400">
-            BENAS Enterprise v0.1
+            ISOS Enterprise v0.1
           </p>
-
         </div>
-
       </div>
-
     </aside>
   );
 }
