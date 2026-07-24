@@ -10,6 +10,7 @@ import type {
 interface ManufacturingUnitFormProps {
   buildings: { id: number; building_name: string }[];
   initialData?: ManufacturingUnit;
+  defaultSector?: PatSector;
   onSubmit: (data: ManufacturingUnitCreate) => void;
   onCancel?: () => void;
   loading?: boolean;
@@ -34,6 +35,7 @@ const SECTORS: { value: PatSector; label: string }[] = [
 export default function ManufacturingUnitForm({
   buildings,
   initialData,
+  defaultSector,
   onSubmit,
   onCancel,
   loading = false,
@@ -61,13 +63,13 @@ export default function ManufacturingUnitForm({
         building_id: undefined,
         unit_code: "",
         unit_name: "",
-        sector: undefined,
+        sector: defaultSector,
         baseline_year: new Date().getFullYear(),
         standards_applicable: "BEE PAT + ISO 50001",
         remarks: "",
       });
     }
-  }, [initialData, reset]);
+  }, [initialData, defaultSector, reset]);
 
   return (
     <form

@@ -1,20 +1,17 @@
 import { getCurrentUser, logout } from "../../services/api/auth";
-
 export default function Header() {
   const user = getCurrentUser();
-
   function handleLogout() {
     logout();
   }
-
   return (
     <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-800">
-          Kamra Building Energy Performance & Net-Zero Accounting System
+          Kamra ClimateOS
         </h1>
         <p className="text-sm text-slate-500">
-          Measure. Verify. Optimize. Decarbonize.
+          Carbon Accounting. ESG Reporting. Net Zero.
         </p>
       </div>
       <div className="flex items-center gap-4">

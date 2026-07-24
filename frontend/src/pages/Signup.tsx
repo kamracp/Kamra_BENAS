@@ -44,7 +44,7 @@ export default function Signup() {
 
     try {
       await signup(form);
-      toast.success("Organization created. Welcome to BENAS!");
+      toast.success("Organization created. Welcome to Kamra ClimateOS!");
       navigate("/dashboard");
     } catch (error: any) {
       const detail =
@@ -61,7 +61,7 @@ export default function Signup() {
         <h1 className="text-3xl font-bold">Create Organization</h1>
 
         <p className="mt-2 text-slate-500">
-          Start your Net Zero journey with BENAS
+          Start your Net Zero journey with Kamra ClimateOS
         </p>
 
         <input

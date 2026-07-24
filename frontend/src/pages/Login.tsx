@@ -35,7 +35,7 @@ export default function Login() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-100">
       <div className="w-full max-w-md rounded-xl bg-white p-10 shadow-xl">
-        <h1 className="text-3xl font-bold">BENAS Login</h1>
+        <h1 className="text-3xl font-bold">Kamra ClimateOS Login</h1>
 
         <p className="mt-2 text-slate-500">
           Net Zero &amp; ESG Intelligence Platform

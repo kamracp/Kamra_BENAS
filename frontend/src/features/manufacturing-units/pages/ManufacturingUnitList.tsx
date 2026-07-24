@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import {
@@ -15,9 +16,85 @@ import ManufacturingUnitForm from "../components/ManufacturingUnitForm";
 import type {
   ManufacturingUnit,
   ManufacturingUnitCreate,
+  PatSector,
 } from "../api/manufacturingUnitApi";
 
 import ConfirmDialog from "../../../components/ui/ConfirmDialog";
+
+const FACILITY_OPTIONS: { value: PatSector | "building"; label: string }[] = [
+  { value: "building", label: "Building (BENAS)" },
+  { value: "aluminium", label: "Aluminium" },
+  { value: "cement", label: "Cement" },
+  { value: "chlor_alkali", label: "Chlor-Alkali" },
+  { value: "fertilizer", label: "Fertilizer" },
+  { value: "iron_steel", label: "Iron & Steel" },
+  { value: "pulp_paper", label: "Pulp & Paper" },
+  { value: "textile", label: "Textile" },
+  { value: "thermal_power", label: "Thermal Power" },
+  { value: "refineries", label: "Refineries" },
+  { value: "railways", label: "Railways" },
+  { value: "discoms", label: "DISCOMs" },
+  { value: "petrochemicals", label: "Petrochemicals" },
+  { value: "other", label: "Other" },
+];
+
+function FacilityTypeSelector({
+  onPickSector,
+  onCancel,
+}: {
+  onPickSector: (sector: PatSector) => void;
+  onCancel: () => void;
+}) {
+  const navigate = useNavigate();
+
+  function handlePick(value: PatSector | "building") {
+    if (value === "building") {
+      navigate("/buildings");
+      return;
+    }
+    onPickSector(value);
+  }
+
+  return (
+    <div className="space-y-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <div>
+        <h2 className="text-xl font-semibold text-gray-800">
+          What are you adding?
+        </h2>
+
+        <p className="mt-1 text-sm text-gray-500">
+          Choose Building for BENAS (energy performance, net zero, ESG) or a
+          sector for a Manufacturing Unit (BEE PAT / ISO 50001 SEC tracking).
+        </p>
+      </div>
+
+      <select
+        defaultValue=""
+        onChange={(e) => handlePick(e.target.value as PatSector | "building")}
+        className="w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+      >
+        <option value="" disabled>
+          Select...
+        </option>
+        {FACILITY_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+
+      <div className="flex justify-end border-t border-gray-200 pt-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="rounded-lg border border-gray-300 px-5 py-2 font-medium text-gray-700 transition hover:bg-gray-100"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function SecSummaryPanel({ unitId }: { unitId: number }) {
   const { data, isLoading, isError } = useSecSummary(unitId);
@@ -88,7 +165,7 @@ function SecSummaryPanel({ unitId }: { unitId: number }) {
                     : "-"}
                 </td>
 
-               <td className="py-1 pr-4 font-medium">
+                <td className="py-1 pr-4 font-medium">
                   {p.sec_gj_per_unit != null
                     ? `${p.sec_gj_per_unit} GJ/${p.production_unit ?? "unit"}`
                     : "-"}
@@ -127,7 +204,8 @@ export default function ManufacturingUnitList() {
   const updateMutation = useUpdateManufacturingUnit();
   const deleteMutation = useDeleteManufacturingUnit();
 
-  const [showForm, setShowForm] = useState(false);
+  const [step, setStep] = useState<"none" | "chooser" | "form">("none");
+  const [chosenSector, setChosenSector] = useState<PatSector | undefined>(undefined);
   const [selectedUnit, setSelectedUnit] = useState<ManufacturingUnit | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
@@ -163,8 +241,9 @@ export default function ManufacturingUnitList() {
         await createMutation.mutateAsync(formData);
       }
 
-      setShowForm(false);
+      setStep("none");
       setSelectedUnit(null);
+      setChosenSector(undefined);
     } catch (error) {
       console.error(error);
       toast.error("Unable to save manufacturing unit.");
@@ -185,17 +264,19 @@ export default function ManufacturingUnitList() {
 
   function openCreateDialog() {
     setSelectedUnit(null);
-    setShowForm(true);
+    setChosenSector(undefined);
+    setStep("chooser");
   }
 
   function openEditDialog(unit: ManufacturingUnit) {
     setSelectedUnit(unit);
-    setShowForm(true);
+    setStep("form");
   }
 
-  function closeForm() {
+  function closeAll() {
     setSelectedUnit(null);
-    setShowForm(false);
+    setChosenSector(undefined);
+    setStep("none");
   }
 
   function toggleExpand(id: number) {
@@ -233,7 +314,7 @@ export default function ManufacturingUnitList() {
           onClick={openCreateDialog}
           className="rounded-lg bg-blue-600 px-5 py-2 font-medium text-white transition hover:bg-blue-700"
         >
-          + Add Manufacturing Unit
+          + Add
         </button>
       </div>
 
@@ -339,18 +420,22 @@ export default function ManufacturingUnitList() {
         </table>
       </div>
 
-      {showForm && (
+      {step !== "none" && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-6">
           <div className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-white shadow-2xl">
             <div className="flex items-center justify-between border-b px-6 py-4">
               <div>
                 <h2 className="text-2xl font-bold">
-                  {selectedUnit ? "Edit Manufacturing Unit" : "Add Manufacturing Unit"}
+                  {step === "chooser"
+                    ? "Add Facility"
+                    : selectedUnit
+                      ? "Edit Manufacturing Unit"
+                      : "Add Manufacturing Unit"}
                 </h2>
               </div>
 
               <button
-                onClick={closeForm}
+                onClick={closeAll}
                 className="text-3xl leading-none text-gray-500 hover:text-black"
               >
                 ×
@@ -358,13 +443,24 @@ export default function ManufacturingUnitList() {
             </div>
 
             <div className="p-6">
-              <ManufacturingUnitForm
-                buildings={buildings}
-                initialData={selectedUnit ?? undefined}
-                onSubmit={saveUnit}
-                loading={createMutation.isPending || updateMutation.isPending}
-                onCancel={closeForm}
-              />
+              {step === "chooser" ? (
+                <FacilityTypeSelector
+                  onPickSector={(sector) => {
+                    setChosenSector(sector);
+                    setStep("form");
+                  }}
+                  onCancel={closeAll}
+                />
+              ) : (
+                <ManufacturingUnitForm
+                  buildings={buildings}
+                  initialData={selectedUnit ?? undefined}
+                  defaultSector={chosenSector}
+                  onSubmit={saveUnit}
+                  loading={createMutation.isPending || updateMutation.isPending}
+                  onCancel={closeAll}
+                />
+              )}
             </div>
           </div>
         </div>

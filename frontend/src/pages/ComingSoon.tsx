@@ -16,7 +16,7 @@ export default function ComingSoon({ title }: ComingSoonProps) {
 
       <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
         This enterprise module is currently under development and will be
-        released as part of the BENAS platform.
+        released as part of the Kamra ClimateOS platform.
       </p>
 
       <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">

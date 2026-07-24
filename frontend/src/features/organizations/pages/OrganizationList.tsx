@@ -161,7 +161,7 @@ export default function OrganizationList() {
           </h1>
 
           <p className="text-gray-500">
-            BENAS Organization Management
+            Kamra ClimateOS Organization Management
           </p>
 
         </div>
